@@ -1,34 +1,30 @@
-cmake_minimum_required(VERSION 3.31)
-project(queue C CXX)
+cmake_minimum_required(VERSION 4.1.0)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+project(queue CXX)
 
-# enable_testing()
+enable_testing()
+find_package(GTest REQUIRED)
 
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-)
-# FetchContent_MakeAvailable(googletest)
+function(set_common_compile_options target)
+  target_compile_options(${target} PRIVATE
+    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
+      -Wall -Wpedantic -Wextra -fdiagnostics-color=always>
+    $<$<CONFIG:Debug>:-fno-omit-frame-pointer -g
+      -fsanitize=address -fsanitize=undefined>
+  )
+endfunction()
 
-file(GLOB PROJECT_SOURCES
-    CONFIGURE_DEPENDS
-    "src/*.cpp"
-)
-add_executable(${CMAKE_PROJECT_NAME})
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${PROJECT_SOURCES})
+function(set_common_link_options target)
+  target_link_options(${target} PRIVATE
+    $<$<CONFIG:Debug>:-fno-omit-frame-pointer -g
+    -fsanitize=address -fsanitize=undefined>
+  )
+endfunction()
 
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "src/")
-target_compile_features(${CMAKE_PROJECT_NAME} PRIVATE cxx_std_23)
-target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
--Wall -Wpedantic -Wextra
--g
--fsanitize=address -fsanitize=undefined)
-target_link_options(${CMAKE_PROJECT_NAME} PRIVATE -fsanitize=address -fsanitize=undefined)
+function(set_common_compile_features target visibility)
+  target_compile_features(${target} ${visibility} cxx_std_23)
+endfunction()
 
-target_link_libraries(${CMAKE_PROJECT_NAME}
-# GTest::gtest_main
-)
-
-# include(GoogleTest)
-# gtest_discover_tests(${PROJECT_NAME})
+add_subdirectory(src)
+add_subdirectory(tests)

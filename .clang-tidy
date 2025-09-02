@@ -1,0 +1,31 @@
+---
+Checks: '-*,clang-analyzer-*,clang-diagnostic-*,cppcoreguidelines-*,modernize-*,performance-*,readability-*, google-readability-braces-around-statements, -modernize-use-trailing-return-type'
+UseColor: true
+WarningsAsErrors: ''
+HeaderFilterRegex: 'src/.*'  # Analyze all headers (change to 'src/.*' to limit to project files)
+FormatStyle: none  # Don't auto-format; use clang-format separately if needed
+
+CheckOptions:
+  # Bugprone checks customization
+  - key: bugprone-exception-escape.IgnoredExceptions
+    value: std::bad_alloc,std::bad_array_new_length
+  - key: bugprone-narrowing-conversions.WarnOnIntegerNarrowingConversion
+    value: true
+
+  # CppCoreGuidelines customizations
+  - key: cppcoreguidelines-init-variables.CheckValueInitializedMembersOnly
+    value: true
+  - key: cppcoreguidelines-owning-memory.LegacyResourceProducers
+    value: std::malloc,std::calloc
+  - key: cppcoreguidelines-owning-memory.LegacyResourceConsumers
+    value: std::free
+
+  # Modernize checks
+  - key: modernize-avoid-c-arrays.PositivePointers
+    value: false  # Warn on all C-style arrays
+  - key: modernize-use-override.IgnoreDestructors
+    value: true  # Don't require 'override' on destructors
+
+  # Performance checks
+  - key: performance-unnecessary-value-param.IncludeStyle
+    value: llvm  # Use LLVM-style includes for performance suggestions

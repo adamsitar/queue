@@ -1,0 +1,5 @@
+file(GLOB QUEUE_SOURCES CONFIGURE_DEPENDS "*")
+add_library(queue_lib STATIC ${QUEUE_SOURCES})
+target_include_directories(queue_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set_common_compile_features(queue_lib PUBLIC)
+set_common_compile_options(queue_lib)
