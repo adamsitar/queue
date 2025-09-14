@@ -57,7 +57,7 @@ struct List
     Element<T>* ptr;
   };
 
-  iterator begin() { return iterator{ head }; };
+  iterator begin([[maybe_unused]] int x) { return iterator{ head }; };
   iterator end() { return iterator{ nullptr }; };
   void print() const
     requires Printable<T>;

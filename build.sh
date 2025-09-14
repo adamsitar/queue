@@ -4,6 +4,7 @@ set -e # Exit on any error
 BUILD_DIR="./build"
 MAIN_EXE="$BUILD_DIR/src/main" # Corrected from 'main' to 'queue_app'
 TESTS_EXE="$BUILD_DIR/tests/tests"
+BENCHMARKS_EXE="$BUILD_DIR/benchmarks/benchmarks"
 
 # -S contains path to CMakeLists.txt
 # -B is the build directory, will be automatically created
@@ -26,6 +27,12 @@ fi
 
 if [ -f "$TESTS_EXE" ]; then
   "$TESTS_EXE" || echo -e "Tests ran but some may have failed."
+else
+  exit 1
+fi
+
+if [ -f "$BENCHMARKS_EXE" ]; then
+  "$BENCHMARKS_EXE" || echo -e "Benchmarks ran but some may have failed."
 else
   exit 1
 fi

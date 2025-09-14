@@ -5,20 +5,31 @@ project(queue CXX)
 
 enable_testing()
 find_package(GTest REQUIRED)
+find_package(benchmark REQUIRED)
 
 function(set_common_compile_options target)
   target_compile_options(${target} PRIVATE
     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
       -Wall -Wpedantic -Wextra -fdiagnostics-color=always>
-    $<$<CONFIG:Debug>:-fno-omit-frame-pointer -g
-      -fsanitize=address -fsanitize=undefined>
+    $<$<CONFIG:Debug>:
+    -g -O2
+    -fno-omit-frame-pointer
+    -fsanitize=address
+    # -fsanitize=thread
+    # -fno-sanitize-recover=all
+    >
   )
 endfunction()
 
 function(set_common_link_options target)
   target_link_options(${target} PRIVATE
-    $<$<CONFIG:Debug>:-fno-omit-frame-pointer -g
-    -fsanitize=address -fsanitize=undefined>
+    $<$<CONFIG:Debug>:
+    -g -O2
+    -fno-omit-frame-pointer
+    -fsanitize=address
+    # -fsanitize=thread
+    # -fno-sanitize-recover=all
+    >
   )
 endfunction()
 
@@ -28,3 +39,4 @@ endfunction()
 
 add_subdirectory(src)
 add_subdirectory(tests)
+add_subdirectory(benchmarks)

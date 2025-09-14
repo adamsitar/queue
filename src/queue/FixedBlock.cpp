@@ -23,7 +23,7 @@ FixedBlock::Block*
 FixedBlock::allocate()
 {
   if (head == nullptr) {
-    // return;
+    return nullptr;
     // FreelistAllocator::on_out_of_memory();
   }
 
@@ -66,6 +66,7 @@ void
 FixedBlock::reset()
 {
   std::memset(global_buffer, 0, POOL_SIZE);
+  std::byte global_buffer[FixedBlock::POOL_SIZE];
   new (this) FixedBlock();
 }
 

@@ -1,3 +1,4 @@
+// #include <benchmark/benchmark.h>
 #include <gtest/gtest.h>
 #include <type_traits>
 
@@ -41,6 +42,24 @@ TEST(FixedBlockTest, AllocatesSingleBlock)
   EXPECT_EQ(allocator.get_info().free, FixedBlock::BLOCK_COUNT)
     << "Initalized block count is not equal to supposed block count";
 }
+
+void
+allocate()
+{
+  auto& allocator = FixedBlock::get_instance();
+  auto* block = allocator.allocate();
+}
+
+// static void
+// BM_Allocate(benchmark::State& state)
+// {
+//   for (auto _ : state) {
+//     allocate();
+//   }
+// }
+//
+// BENCHMARK(BM_Allocate);
+// BENCHMARK_MAIN();
 
 TEST(FixedBlockTest, FreesAndReallocates)
 {

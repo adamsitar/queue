@@ -1,0 +1,5 @@
+file(GLOB QUEUE_SOURCES CONFIGURE_DEPENDS "*")
+add_library(mbb STATIC ${QUEUE_SOURCES})
+target_include_directories(mbb PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set_common_compile_features(mbb PUBLIC)
+set_common_compile_options(mbb)
