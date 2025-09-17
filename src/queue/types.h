@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <expected>
 #include <print>
+#include <string>
 
 #define delete_special_member_functions(class_name)                            \
   class_name(const class_name&) = delete;                                      \

@@ -1,5 +1,6 @@
 // #include <benchmark/benchmark.h>
 #include <gtest/gtest.h>
+#include <iostream>
 #include <type_traits>
 
 #define private public
@@ -8,14 +9,21 @@
 
 std::byte global_buffer[FixedBlock::POOL_SIZE];
 
-TEST(FixedBlockTest, InitializesSingleton)
+class FixedBlockFixture : public testing::TestWithParam<int>
 {
-  auto& allocator = FixedBlock::get_instance();
+public:
+  FixedBlock& allocator{ FixedBlock::get_instance() };
+};
 
+TEST_F(FixedBlockFixture, InitializesSingleton)
+{
   // Pool pointers are set and head is not null (all blocks free initially
   EXPECT_NE(allocator.pool_start, nullptr);
   EXPECT_NE(allocator.pool_end, nullptr);
   EXPECT_NE(allocator.head, nullptr);
+
+  // char buffer[5];
+  // std::cout << buffer[5];
 
   // Check pool size invariant
   EXPECT_EQ(reinterpret_cast<uintptr_t>(allocator.pool_end) -
@@ -49,17 +57,6 @@ allocate()
   auto& allocator = FixedBlock::get_instance();
   auto* block = allocator.allocate();
 }
-
-// static void
-// BM_Allocate(benchmark::State& state)
-// {
-//   for (auto _ : state) {
-//     allocate();
-//   }
-// }
-//
-// BENCHMARK(BM_Allocate);
-// BENCHMARK_MAIN();
 
 TEST(FixedBlockTest, FreesAndReallocates)
 {
@@ -107,6 +104,20 @@ TEST(FixedBlockTest, ExhaustsPool)
 
   EXPECT_EQ(allocator.get_info().free, FixedBlock::BLOCK_COUNT)
     << "Initalized block count is not equal to supposed block count";
+}
+
+const char*
+getDanglingPointer()
+{
+  char local_buffer[] = "This is temporary";
+  return local_buffer;
+}
+
+TEST(ASanRuntimeOptionTests, FailsToDetectUseAfterReturnByDefault)
+{
+  const char* dangling_ptr = getDanglingPointer();
+  char first_char = dangling_ptr[0];
+  EXPECT_NE(first_char, '\0');
 }
 
 #undef private

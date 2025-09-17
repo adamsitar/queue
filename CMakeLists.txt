@@ -1,42 +1,22 @@
 cmake_minimum_required(VERSION 4.1.0)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 project(queue CXX)
 
-enable_testing()
-find_package(GTest REQUIRED)
-find_package(benchmark REQUIRED)
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
+set(CMAKE_CXX_STANDARD 23)
 
-function(set_common_compile_options target)
-  target_compile_options(${target} PRIVATE
-    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
-      -Wall -Wpedantic -Wextra -fdiagnostics-color=always>
-    $<$<CONFIG:Debug>:
-    -g -O2
-    -fno-omit-frame-pointer
-    -fsanitize=address
-    # -fsanitize=thread
-    # -fno-sanitize-recover=all
-    >
-  )
-endfunction()
-
-function(set_common_link_options target)
-  target_link_options(${target} PRIVATE
-    $<$<CONFIG:Debug>:
-    -g -O2
-    -fno-omit-frame-pointer
-    -fsanitize=address
-    # -fsanitize=thread
-    # -fno-sanitize-recover=all
-    >
-  )
-endfunction()
-
-function(set_common_compile_features target visibility)
-  target_compile_features(${target} ${visibility} cxx_std_23)
-endfunction()
+include(TargetHelpers)
+include(Coverage)
+include(Sanitize)
 
 add_subdirectory(src)
+
+enable_testing()
 add_subdirectory(tests)
 add_subdirectory(benchmarks)
+
+include(Format)
+include(Docs)
